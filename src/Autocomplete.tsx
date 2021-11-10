@@ -81,7 +81,7 @@ export interface AutocompleteMultipleProps<ItemT>
   onPressArrow?: () => void;
   outerValue?: string;
   visibleProp?: boolean;
-  setVisibleProp?: (v: boolean) => void;
+  setVisibleProp?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface AutocompleteSingleProps<ItemT>
@@ -93,7 +93,7 @@ export interface AutocompleteSingleProps<ItemT>
   onPressArrow?: () => void;
   outerValue?: string;
   visibleProp?: boolean;
-  setVisibleProp?: (v: boolean) => void;
+  setVisibleProp?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function defaultFilterOptions<ItemT>(
