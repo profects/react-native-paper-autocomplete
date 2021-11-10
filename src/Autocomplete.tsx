@@ -80,6 +80,8 @@ export interface AutocompleteMultipleProps<ItemT>
   onChange: (v: ItemT[]) => void;
   onPressArrow?: () => void;
   outerValue?: string;
+  visibleProp?: boolean;
+  setVisibleProp?: (v: boolean) => void;
 }
 
 export interface AutocompleteSingleProps<ItemT>
@@ -90,6 +92,8 @@ export interface AutocompleteSingleProps<ItemT>
   onChange: (v: ItemT | undefined) => void;
   onPressArrow?: () => void;
   outerValue?: string;
+  visibleProp?: boolean;
+  setVisibleProp?: (v: boolean) => void;
 }
 
 export function defaultFilterOptions<ItemT>(
@@ -157,6 +161,8 @@ export default function Autocomplete<ItemT>(
     style,
     value,
     maxHeight,
+    visibleProp,
+    setVisibleProp,
     getOptionValue = (option: ItemT) =>
       (option as any).id || (option as any).key || (option as any).value,
     getOptionLabel = (option: ItemT) =>
@@ -169,6 +175,11 @@ export default function Autocomplete<ItemT>(
   const { value: singleValue, onChange: onChangeSingle } =
     props as AutocompleteSingleProps<ItemT>;
 
+  let [visible, setVisible] = React.useState(false);
+  if (visibleProp && setVisibleProp) {
+    visible = visibleProp;
+    setVisible = setVisibleProp;
+  }
   const [highlightedIndex, setHighlightedIndex] = React.useState(0);
   const [inputLayout, setInputLayout] =
     React.useState<LayoutRectangle>(defaultLayout);
@@ -177,7 +188,6 @@ export default function Autocomplete<ItemT>(
   const inputContainerRef = React.useRef<View>(null);
   const inputRef = React.useRef<NativeTextInput>(null);
   const [inputValue, setInputValue] = React.useState(defaultValue || '');
-  const [visible, setVisible] = React.useState(false);
   const ref = React.createRef();
   const outerRef = React.useRef<any>(ref);
 

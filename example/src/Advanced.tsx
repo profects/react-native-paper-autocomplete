@@ -28,10 +28,13 @@ function Advanced({
     // const response = api.fetch(...)
     // setOptions((prev) => [...prev, response.data]);
   };
+  const [visible, setVisible] = React.useState(false);
 
   return (
     <Autocomplete
       multiple={multiple}
+      visibleProp={visible}
+      setVisibleProp={setVisible}
       getOptionLabel={(item) => item.name}
       getOptionValue={(item) => item.id}
       onChange={setValue}
