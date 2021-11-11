@@ -1,13 +1,20 @@
 import { Portal, Surface } from 'react-native-paper';
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import * as React from 'react';
+import { useKeyboard } from '@react-native-community/hooks';
 
-export default function Popper({
+function Popper({
   onPressOutside,
   children,
   surfaceStyle,
   outerRef,
   visible,
+  inputLayout,
 }: {
   onPressOutside: () => any;
   children: any;
@@ -19,7 +26,16 @@ export default function Popper({
   surfaceStyle: any;
   maxHeight?: number;
   visible?: boolean;
+  keyboardHeight?: number;
+  hasValue?: boolean;
+  inputLayout?: any;
 }) {
+  const { keyboardHeight } = useKeyboard();
+  const windowConst = useWindowDimensions();
+  const spaceBelow =
+    windowConst.height -
+    keyboardHeight -
+    (inputLayout.y + inputLayout.height || 0);
   return (
     <Portal>
       <View
@@ -31,8 +47,25 @@ export default function Popper({
         <TouchableWithoutFeedback onPress={onPressOutside}>
           <View ref={outerRef} style={[StyleSheet.absoluteFill, { flex: 1 }]} />
         </TouchableWithoutFeedback>
-        <Surface style={surfaceStyle}>{children}</Surface>
+        <Surface
+          style={[
+            ...surfaceStyle,
+            spaceBelow < 50 && { top: inputLayout.y + 6 - 250 },
+          ]}
+        >
+          <View
+            style={{
+              maxHeight: spaceBelow < 50 ? 250 : spaceBelow,
+              alignSelf: 'center',
+              width: '100%',
+            }}
+          >
+            {children}
+          </View>
+        </Surface>
       </View>
     </Portal>
   );
 }
+
+export default Popper;

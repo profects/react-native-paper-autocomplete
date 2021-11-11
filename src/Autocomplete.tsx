@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   FlatList,
   FlatListProps,
+  KeyboardAvoidingView,
   LayoutChangeEvent,
   LayoutRectangle,
   NativeSyntheticEvent,
@@ -33,6 +34,7 @@ import { usePopper } from 'react-popper';
 // @ts-ignore
 import ClickOutside from './Outside';
 import Popper from './Popper';
+import { useKeyboard } from '@react-native-community/hooks';
 
 type PaperInputProps = React.ComponentProps<typeof TextInput>;
 
@@ -82,6 +84,7 @@ export interface AutocompleteMultipleProps<ItemT>
   outerValue?: string;
   visibleProp?: boolean;
   setVisibleProp?: React.Dispatch<React.SetStateAction<boolean>>;
+  keyboardHeight?: number;
 }
 
 export interface AutocompleteSingleProps<ItemT>
@@ -94,6 +97,7 @@ export interface AutocompleteSingleProps<ItemT>
   outerValue?: string;
   visibleProp?: boolean;
   setVisibleProp?: React.Dispatch<React.SetStateAction<boolean>>;
+  keyboardHeight?: number;
 }
 
 export function defaultFilterOptions<ItemT>(
@@ -145,7 +149,7 @@ const defaultLayout: LayoutRectangle = {
   height: 0,
 };
 
-export default function Autocomplete<ItemT>(
+function Autocomplete<ItemT>(
   props: AutocompleteMultipleProps<ItemT> | AutocompleteSingleProps<ItemT>
 ) {
   const windowConst = useWindowDimensions();
@@ -237,6 +241,7 @@ export default function Autocomplete<ItemT>(
     // setVisible(false);
   };
   const focus = (_: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    inputRef?.current?.focus();
     setVisible(true);
   };
   const layout = (e: LayoutChangeEvent) => {
@@ -553,6 +558,9 @@ export default function Autocomplete<ItemT>(
     }
     return theme.colors.background;
   }, [theme, inputStyle]);
+  const { keyboardHeight, keyboardShown } = useKeyboard();
+  const showKeyboardPusher =
+    inputLayout.y > windowConst.height - keyboardHeight && keyboardShown;
   return (
     <View
       style={[innerStyles.menu, style]}
@@ -622,7 +630,7 @@ export default function Autocomplete<ItemT>(
               if (visible) {
                 inputRef.current?.blur();
               } else {
-                inputRef.current?.focus();
+                focus('' as any);
               }
             }
           }}
@@ -659,7 +667,12 @@ export default function Autocomplete<ItemT>(
               props.dense && { bottom: -4 },
             ]}
             onPress={() => {
-              setVisible(false);
+              if (multiple) {
+                setVisible(false);
+              } else {
+                inputRef.current?.focus();
+                setVisible(true);
+              }
               setInputValue('');
               if (multiple) {
                 onChangeMultiple([]);
@@ -674,16 +687,20 @@ export default function Autocomplete<ItemT>(
       {loading ? <ActivityIndicator style={innerStyles.loading} /> : null}
       {visible && (
         <Popper
+          // @ts-ignore
           onPressOutside={() => {
             setVisible(false);
+            inputRef?.current?.blur();
           }}
           attributes={attributes}
           styles={styles}
           setPopperRef={setPopperRef}
           visible={visible}
           dropdownWidth={dropdownWidth}
+          hasValue={inputValue.length > 0}
           outerRef={outerRef}
           maxHeight={maxHeight}
+          inputLayout={inputLayout}
           surfaceStyle={[
             innerStyles.surface,
             {
@@ -701,6 +718,7 @@ export default function Autocomplete<ItemT>(
             <SectionListComponent<ItemT>
               {...listProps}
               {...innerListProps}
+              keyboardShouldPersistTaps="handled"
               sections={sections}
               renderSectionHeader={({ section: { title } }: any) => (
                 // @ts-ignore
@@ -711,15 +729,24 @@ export default function Autocomplete<ItemT>(
             <FinalListComponent<ItemT>
               {...listProps}
               {...innerListProps}
+              keyboardShouldPersistTaps="handled"
               getItemLayout={getFlatListItemLayout}
               data={data}
             />
           )}
         </Popper>
       )}
+      {showKeyboardPusher && (
+        <KeyboardAvoidingView
+          behavior={'position'}
+          keyboardVerticalOffset={keyboardHeight + 150}
+        />
+      )}
     </View>
   );
 }
+
+export default Autocomplete;
 
 function usePrevious<T>(
   value: T

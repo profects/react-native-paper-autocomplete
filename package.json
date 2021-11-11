@@ -159,6 +159,10 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.10.1",
+    "@react-native-community/hooks": "^2.8.0",
+    "@types/react-native-keyboard-spacer": "^0.4.2",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-keyboard-spacer": "^0.4.1",
     "react-popper": "^2.2.5"
   }
 }
