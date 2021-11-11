@@ -36,6 +36,7 @@ function Popper({
     windowConst.height -
     keyboardHeight -
     (inputLayout.y + inputLayout.height || 0);
+  // const optionListAbsolute = Platform.OS === 'android' && spaceBelow < 20;
   return (
     <Portal>
       <View
@@ -50,7 +51,12 @@ function Popper({
         <Surface
           style={[
             ...surfaceStyle,
-            spaceBelow < 50 && { top: inputLayout.y + 6 - 250 },
+            // spaceBelow < 50 && Platform.OS === 'ios'
+            //   ? { top: inputLayout.y + 6 - 250 }
+            //   : {
+            //       top: inputLayout.y + inputLayout.height + 24,
+            //     },
+            // { backgroundColor: 'red' },
           ]}
         >
           <View

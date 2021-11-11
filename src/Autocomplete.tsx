@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   FlatList,
   FlatListProps,
-  KeyboardAvoidingView,
   LayoutChangeEvent,
   LayoutRectangle,
   NativeSyntheticEvent,
@@ -34,7 +33,6 @@ import { usePopper } from 'react-popper';
 // @ts-ignore
 import ClickOutside from './Outside';
 import Popper from './Popper';
-import { useKeyboard } from '@react-native-community/hooks';
 
 type PaperInputProps = React.ComponentProps<typeof TextInput>;
 
@@ -558,9 +556,6 @@ function Autocomplete<ItemT>(
     }
     return theme.colors.background;
   }, [theme, inputStyle]);
-  const { keyboardHeight, keyboardShown } = useKeyboard();
-  const showKeyboardPusher =
-    inputLayout.y > windowConst.height - keyboardHeight && keyboardShown;
   return (
     <View
       style={[innerStyles.menu, style]}
@@ -735,12 +730,6 @@ function Autocomplete<ItemT>(
             />
           )}
         </Popper>
-      )}
-      {showKeyboardPusher && (
-        <KeyboardAvoidingView
-          behavior={'position'}
-          keyboardVerticalOffset={keyboardHeight + 150}
-        />
       )}
     </View>
   );

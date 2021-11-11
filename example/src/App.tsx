@@ -20,6 +20,7 @@ import {
   Title,
   useTheme,
 } from 'react-native-paper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 function AppInner() {
   const theme = useTheme();
@@ -92,7 +93,10 @@ function AppInner() {
       <Enter />
 
       <Enter />
-      <Animated.View
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        extraHeight={200}
+        keyboardShouldPersistTaps="handled"
         style={[
           styles.content,
           styles.contentShadow,
@@ -117,7 +121,7 @@ function AppInner() {
           <Advanced multiple={false} mode={'flat'} dense={true} />
           <Enter />
         </View>
-      </Animated.View>
+      </KeyboardAwareScrollView>
       <Enter />
       <Enter />
 
